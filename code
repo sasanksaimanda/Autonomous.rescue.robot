@@ -1,0 +1,101 @@
+#include <Servo.h>
+const int pingPin = A1; // Trigger Pin of Ultrasonic Sensor
+const int echoPin = A2; // Echo Pin of Ultrasonic Sensor
+long duration;
+int distance;
+Servo myservo;
+float flat=0, flon=0;
+#define buz A3
+int pirs=A0;
+int m1=2;
+int m2=3;
+int m3=4;
+int m4=5;
+int cam=10;
+int pos = 0;
+
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(pirs,INPUT);
+  pinMode(m1,OUTPUT);
+  pinMode(m2,OUTPUT);
+  pinMode(m3,OUTPUT);
+  pinMode(m4,OUTPUT);
+  pinMode(cam,OUTPUT);
+  myservo.attach(11);
+  digitalWrite(cam,0);
+pinMode(pingPin, OUTPUT);
+pinMode(echoPin, INPUT);
+pinMode(buz,OUTPUT);  
+digitalWrite(buz,0);
+
+
+}
+
+void loop() 
+{  
+ 
+ digitalWrite(pingPin, LOW);
+delayMicroseconds(2);
+digitalWrite(pingPin, HIGH);
+delayMicroseconds(10);
+digitalWrite(pingPin, LOW);
+duration = pulseIn(echoPin, HIGH);
+distance=duration*0.034/2;
+Serial.println(distance);
+ int pval=digitalRead(pirs);
+if(pval==0)
+{
+  digitalWrite(cam,1);
+  digitalWrite(buz,0);
+  for (pos = 90; pos <= 180; pos += 1) { // goes from 0 degrees to 180 degrees
+    // in steps of 1 degree
+    myservo.write(pos);              // tell servo to go to position in variable 'pos'
+    delay(15);                       // waits 15 ms for the servo to reach the position
+  }
+  for (pos = 180; pos >= 90; pos -= 1) { // goes from 180 degrees to 0 degrees
+    myservo.write(pos);              // tell servo to go to position in variable 'pos'
+    delay(15);                       // waits 15 ms for the servo to reach the position
+  }
+  for (pos = 90; pos >= 0; pos -= 1) { // goes from 0 degrees to 180 degrees
+    // in steps of 1 degree
+    myservo.write(pos);              // tell servo to go to position in variable 'pos'
+    delay(15);                       // waits 15 ms for the servo to reach the position
+  }
+  for (pos = 0; pos <= 90; pos += 1) { // goes from 180 degrees to 0 degrees
+    myservo.write(pos);              // tell servo to go to position in variable 'pos'
+    delay(15);                       // waits 15 ms for the servo to reach the position
+  }
+  delay(3000);
+  digitalWrite(cam,0);
+  digitalWrite(buz,0);
+}
+else
+{
+  digitalWrite(cam,0);
+}
+ if(distance<5)
+ {
+   
+  digitalWrite(cam,1);
+  digitalWrite(buz,1);
+  
+  
+  digitalWrite(m1,1);
+  digitalWrite(m2,0);
+  digitalWrite(m3,0);
+  digitalWrite(m4,1);
+   digitalWrite(cam,0);
+ }
+else
+{ 
+   digitalWrite(cam,0);
+   digitalWrite(buz,0);
+  digitalWrite(m1,1);
+  digitalWrite(m2,0);
+  digitalWrite(m3,1);
+  digitalWrite(m4,0); 
+}
+
+}
